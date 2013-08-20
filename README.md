@@ -1,23 +1,22 @@
-wintersmith-plugin
-==================
+# wintersmith-gherkin
 
-[Wintersmith](https://github.com/jnordberg/wintersmith) plugin template
+[Wintersmith](https://github.com/jnordberg/wintersmith) gherkin plugin
 
 ## Installing
 
 Install globally or locally using npm
 
 ```
-npm install [-g] wintersmith-plugin
+npm install [-g] wintersmith-gherkin
 ```
 
-and add `wintersmith-plugin` to your config.json
+and add `wintersmith-gherkin` to your config.json
 
 ```json
 {
-  "plugins": [
-    "wintersmith-plugin"
-  ]
+	"plugins": [
+		"wintersmith-gherkin"
+	]
 }
 ```
 
