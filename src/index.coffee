@@ -1,7 +1,6 @@
 
 fs             = require 'fs'
 path           = require 'path'
-jade           = require 'jade'
 marked         = require 'marked'
 GherkinLexer   = require './GherkinLexer'
 
@@ -19,9 +18,7 @@ module.exports = (env, callback) ->
 	class GherkinPlugin extends env.ContentPlugin
 		
 		constructor: (@filepath, @text) ->
-			template  = fs.readFileSync __dirname + '/template.jade' # TODO: read form configuration
-			@template = jade.compile template
-			
+			@template = 'feature.jade' # TODO: read from configuration
 			lang = 'en' # TODO: read from configuration
 			@lexer = new GherkinLexer lang
 		
@@ -32,6 +29,7 @@ module.exports = (env, callback) ->
 			name + '.html'
 		
 		getView: -> (env, locals, contents, templates, callback) ->
+			template = templates[@template]
 			lastScenario = null
 			feature =
 				scenarios: []
@@ -54,7 +52,7 @@ module.exports = (env, callback) ->
 					keyword: keyword
 					name:    markedLine name
 			@lexer.on 'eof', =>
-				callback null, new Buffer @template feature
+				callback null, new Buffer template.fn feature
 			@lexer.scan @text
 	
 	GherkinPlugin.fromFile = (filepath, callback) ->

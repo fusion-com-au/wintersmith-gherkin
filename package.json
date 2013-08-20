@@ -12,8 +12,7 @@
 	"main": "lib/",
 	"dependencies": {
 		"gherkin": "~2.12.1",
-		"marked": "~0.2.9",
-		"jade": "~0.34.1"
+		"marked": "~0.2.9"
 	},
 	"devDependencies": {
 		"coffee-script": "~1.6.3",
