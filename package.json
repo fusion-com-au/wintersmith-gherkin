@@ -1,26 +1,30 @@
 {
-  "name": "wintersmith-plugin",
-  "version": "1.0.0",
-  "description": "A wintersmith plugin.",
-  "author": "Anonymous",
-  "license": "MIT",
-  "keywords": [
-    "wintersmith",
-    "wintersmith-plugin"
-  ],
-  "main": "lib/",
-  "dependencies": {
-  },
-  "devDependencies": {
-    "coffee-script": ">1.5",
-    "vows": "0.7.x",
-    "wintersmith": "2.x"
-  },
-  "peerDependencies": {
-    "wintersmith": "2.x"
-  },
-  "scripts": {
-    "test": "./node_modules/.bin/vows test/* --spec",
-    "prepublish": "./bin/compile"
-  }
+	"name": "wintersmith-gherkin",
+	"version": "0.1.0",
+	"description": "A wintersmith gherkin plugin that parses feature files.",
+	"author": "Fiona Schmidtke",
+	"license": "MIT",
+	"keywords": [
+		"wintersmith",
+		"wintersmith-plugin",
+		"gherkin"
+	],
+	"main": "lib/",
+	"dependencies": {
+		"gherkin": "~2.12.1",
+		"marked": "~0.2.9",
+		"jade": "~0.34.1"
+	},
+	"devDependencies": {
+		"coffee-script": "~1.6.3",
+		"vows": "~0.7.0",
+		"wintersmith": "~2.0.5"
+	},
+	"peerDependencies": {
+		"wintersmith": "~2.0.5"
+	},
+	"scripts": {
+		"test": "./node_modules/.bin/vows test/* --spec",
+		"prepublish": "./bin/compile"
+	}
 }
