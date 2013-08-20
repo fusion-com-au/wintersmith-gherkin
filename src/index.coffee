@@ -1,39 +1,43 @@
-### A Wintersmith plugin. ###
 
-fs = require 'fs'
+fs             = require 'fs'
+path           = require 'path'
+jade           = require 'jade'
+marked         = require 'marked'
+GherkinLexer   = require './GherkinLexer'
 
 module.exports = (env, callback) ->
-  # *env* is the current wintersmith environment
-  # *callback* should be called when the plugin has finished loading
-
-  class MyPlugin extends env.ContentPlugin
-    ### Prepends 'Wintersmith is awesome' to text files. ###
-
-    constructor: (@filepath, text) ->
-      @text = 'Wintersmith is awesome!\n' + text
-
-    getFilename: ->
-      # filename where plugin is rendered to, this plugin uses the
-      @filepath.relative
-
-    getView: -> (env, locals, contents, templates, callback) ->
-      # note that this function returns a function, you can also return a string
-      # to use a view already added to the env, see env.registerView for more
-
-      # this view simply passes the text to the renderer
-      callback null, new Buffer(@text) # you can also pass a stream
-
-  MyPlugin.fromFile = (filepath, callback) ->
-    fs.readFile filepath.full, (error, result) ->
-      if not error?
-        plugin = new MyPlugin filepath, result.toString()
-      callback error, plugin
-
-  # register the plugin to intercept .txt and .text files using a glob pattern
-  # the first argument is the content group the plugin will belong to
-  # i.e. directory grouping, contents.somedir._.text is an array of all
-  #      plugin instances beloning to the text group in somedir
-  env.registerContentPlugin 'text', '**/*.*(txt|text)', MyPlugin
-
-  # tell plugin manager we are done
-  callback()
+	# *env* is the current wintersmith environment
+	# *callback* should be called when the plugin has finished loading
+	
+	class GherkinPlugin extends env.ContentPlugin
+		
+		constructor: (@filepath, @text) ->
+			lang = 'en' # TODO: read from configuration
+			@lexer = new GherkinLexer lang
+		
+		getFilename: ->
+			feature = @filepath.relative
+			ext     = path.extname feature
+			name    = path.basename feature, ext
+			name + '.html'
+		
+		getView: -> (env, locals, contents, templates, callback) ->
+			rendered = ''
+			
+			@lexer.on 'feature', (keyword, name, description) ->
+				rendered += marked description
+			
+			@lexer.on 'eof', ->
+				callback null, new Buffer(rendered)
+			@lexer.scan @text
+	
+	GherkinPlugin.fromFile = (filepath, callback) ->
+		fs.readFile filepath.full, (error, result) ->
+			if not error?
+				plugin = new GherkinPlugin filepath, result.toString()
+			callback error, plugin
+	
+	env.registerContentPlugin 'gherkin', '**/*.*feature', GherkinPlugin
+	
+	# tell plugin manager we are done
+	callback()

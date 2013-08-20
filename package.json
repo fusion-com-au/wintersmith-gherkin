@@ -17,14 +17,12 @@
 	},
 	"devDependencies": {
 		"coffee-script": "~1.6.3",
-		"vows": "~0.7.0",
 		"wintersmith": "~2.0.5"
 	},
 	"peerDependencies": {
 		"wintersmith": "~2.0.5"
 	},
 	"scripts": {
-		"test": "./node_modules/.bin/vows test/* --spec",
 		"prepublish": "./bin/compile"
 	}
 }
