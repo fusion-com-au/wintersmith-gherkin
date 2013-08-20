@@ -5,6 +5,13 @@ jade           = require 'jade'
 marked         = require 'marked'
 GherkinLexer   = require './GherkinLexer'
 
+markedLine = (md) ->
+	split  = md.split '\n'
+	tokens = marked.lexer split[0]
+	if tokens.length > 0
+		tokens[0].type = 'html'
+	marked.parser tokens
+
 module.exports = (env, callback) ->
 	# *env* is the current wintersmith environment
 	# *callback* should be called when the plugin has finished loading
@@ -12,6 +19,9 @@ module.exports = (env, callback) ->
 	class GherkinPlugin extends env.ContentPlugin
 		
 		constructor: (@filepath, @text) ->
+			template  = fs.readFileSync __dirname + '/template.jade' # TODO: read form configuration
+			@template = jade.compile template
+			
 			lang = 'en' # TODO: read from configuration
 			@lexer = new GherkinLexer lang
 		
@@ -22,13 +32,29 @@ module.exports = (env, callback) ->
 			name + '.html'
 		
 		getView: -> (env, locals, contents, templates, callback) ->
-			rendered = ''
-			
+			lastScenario = null
+			feature =
+				scenarios: []
+			# see https://github.com/cucumber/gherkin/blob/master/js/example/print.js
 			@lexer.on 'feature', (keyword, name, description) ->
-				rendered += marked description
-			
-			@lexer.on 'eof', ->
-				callback null, new Buffer(rendered)
+				feature.keyword     = keyword
+				feature.name        = markedLine name
+				feature.description = marked description
+				feature.scenarios   = []
+			@lexer.on 'scenario', (keyword, name, description) ->
+				scenario =
+					keyword:     keyword
+					name:        markedLine name
+					description: marked description
+					steps:       []
+				feature.scenarios.push scenario
+				lastScenario = scenario
+			@lexer.on 'step', (keyword, name) ->
+				lastScenario.steps.push
+					keyword: keyword
+					name:    markedLine name
+			@lexer.on 'eof', =>
+				callback null, new Buffer @template feature
 			@lexer.scan @text
 	
 	GherkinPlugin.fromFile = (filepath, callback) ->

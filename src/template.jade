@@ -1,0 +1,15 @@
+doctype
+head
+	title!= 'Feature: ' + name
+h1!= name
+!= description
+h2 Scenarios
+ul
+	each scenario in scenarios
+		li
+			h2!= scenario.name
+			ul
+				each step in scenario.steps
+					li
+						span= step.keyword
+						span!= step.name

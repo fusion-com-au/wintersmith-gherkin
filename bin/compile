@@ -4,6 +4,7 @@ echo "Compiling CoffeeScript..."
 
 if [ -f ./node_modules/.bin/coffee ]; then
     ./node_modules/.bin/coffee -o ./lib -b -c ./src
+    cp src/*.jade lib/*.jade
     exit $?
 else
   echo "ERROR: CoffeScript package missing."
