@@ -11,6 +11,15 @@ markedLine = (md) ->
 		tokens[0].type = 'html'
 	marked.parser tokens
 
+escapePlaceholders = (str) ->
+	r = /<[^>]*>/g
+	str.replace r, (str) ->
+		str = str.substr 1, str.length - 2
+		'<span class="placeholder">' + str + '</span>'
+
+nl2br = (str) ->
+	str.replace /\n/g, '<br/>'
+
 module.exports = (env, callback) ->
 	# *env* is the current wintersmith environment
 	# *callback* should be called when the plugin has finished loading
@@ -39,27 +48,76 @@ module.exports = (env, callback) ->
 			if template is undefined
 				callback Error 'Could not find template ' + @template
 				return
-			lastScenario = null
-			feature =
+			lastSeen  = null
+			lastTable = null
+			lastStep  = null
+			feature   =
 				scenarios: []
+			tags = []
 			# see https://github.com/cucumber/gherkin/blob/master/js/example/print.js
 			@lexer.on 'feature', (keyword, name, description) ->
 				feature.keyword     = keyword
 				feature.name        = markedLine name
 				feature.description = marked description
 				feature.scenarios   = []
+				feature.tags        = tags
+				tags = []
+			@lexer.on 'background', (keyword, name, description) ->
+				feature.background =
+					keyword:     keyword
+					name:        markedLine name
+					description: marked description
+					steps:       []
+					tags:        tags
+				tags = []
+				lastSeen = feature.background
 			@lexer.on 'scenario', (keyword, name, description) ->
 				scenario =
 					keyword:     keyword
 					name:        markedLine name
 					description: marked description
 					steps:       []
+					tags:        tags
+					outline:     false
+				tags = []
 				feature.scenarios.push scenario
-				lastScenario = scenario
+				lastSeen = scenario
+			@lexer.on 'scenario_outline', (keyword, name, description) ->
+				scenarioOutline =
+					keyword:     keyword
+					name:        markedLine name
+					description: marked description
+					steps:       []
+					tags:        tags
+					examples:    []
+					outline:     true
+				tags = []
+				feature.scenarios.push scenarioOutline
+				lastSeen = scenarioOutline
 			@lexer.on 'step', (keyword, name) ->
-				lastScenario.steps.push
+				step =
 					keyword: keyword
-					name:    markedLine name
+					name:    markedLine escapePlaceholders name
+					table:   []
+				lastTable = step.table
+				lastSeen.steps.push step
+				lastStep = step
+			@lexer.on 'doc_string', (content_type, string) ->
+				lastStep.docString =
+					contentType: content_type
+					string:      nl2br escapePlaceholders string
+			@lexer.on 'examples', (keyword, name, description) ->
+				table = []
+				lastSeen.examples.push
+					keyword:     keyword
+					name:        markedLine name
+					description: marked description
+					table:       table
+				lastTable = table
+			@lexer.on 'row', (row) ->
+				lastTable.push row
+			@lexer.on 'tag', (value) ->
+				tags.push value
 			@lexer.on 'eof', =>
 				callback null, new Buffer template.fn feature
 			@lexer.scan @text
