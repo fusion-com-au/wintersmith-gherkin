@@ -1,0 +1,49 @@
+.scenario-steps, .nav-scenarios {
+	list-style-type: none;
+}
+
+.key {
+	text-align: right;
+	padding-right: 0;
+	font-weight: 600;
+}
+
+.scenario-steps, .stepname, .nav-scenarios {
+	padding-left: 0;
+}
+
+.stepname:before {
+	content: '\00a0';
+}
+
+.tag {
+	min-width: 4em;
+	opacity: 0.5;
+}
+
+.tag:hover {
+	opacity: 1;
+}
+
+.scenario-link:before {
+	content: '\25be';
+	opacity: 0.5;
+	margin-right: 0.5em;
+	margin-left: 2px;
+	position: relative;
+	bottom: 1px;
+}
+
+.feature-header {
+	margin-bottom: 10px;
+	padding-bottom: 0;
+}
+
+.tags {
+	position: absolute;
+	right: 1em;
+}
+
+.page-scenario {
+	padding-right: 6em;
+}

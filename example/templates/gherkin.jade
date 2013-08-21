@@ -1,11 +1,13 @@
 
+extends layout
+
 mixin link(str)
 	a(href='#'+locals.slug(str).toLowerCase())!=str
 
 mixin step(step)
-	li
-		span.key= step.keyword
-		span!= step.name
+	li.row
+		span.key.col-xs-2= step.keyword
+		span.stepname!= step.name
 		if step.table.length > 0
 			table.datatable
 				each row in step.table
@@ -17,43 +19,48 @@ mixin step(step)
 
 mixin tags(tags)
 	if tags
-		div.tags
+		.tags
 			each tag in tags
-				span!= tag
+				span.tag.badge!= tag
+				br
 
-doctype
-head
-	title!= 'Feature: ' + name
-h1!= name
-+tags(tags)
-!= description
-if background
-	h2!= 'Background: ' + background.name
-	+tags(background.tags)
-	ul
-		each step in background.steps
-			+step(step)
-h2 Scenarios
-ul.nav-scenarios
-	each scenario in scenarios
-		li
-			+link(scenario.name)
-ul
-	each scenario in scenarios
-		li
-			if scenario.outline
-				h2(id=locals.slug(scenario.name).toLowerCase())!= 'Scenario Outline: ' + scenario.name
-			else
-				h2(id=locals.slug(scenario.name).toLowerCase())!= 'Scenario: ' + scenario.name
-			+tags(scenario.tags)
-			ul
-				each step in scenario.steps
+block title
+	!= 'Feature: ' + name
+
+block content
+	.page-header
+		h1!= name
+	+tags(tags)
+	.page-scenario!= description
+	h4 Scenarios
+	ul.nav-scenarios.page-scenario
+		each scenario in scenarios
+			li.scenario-link
+				+link(scenario.name)
+	if background
+		.page-header.feature-header
+			.page-scenario
+				if background.name
+					h4!= background.name
+				else
+					h4 Background
+		+tags(background.tags)
+		.page-scenario
+			ol.scenario-steps
+				each step in background.steps
 					+step(step)
-			if scenario.outline
-				each example in scenario.examples
-					h3!= example.keyword
-					table.example
-						each row in example.table
-							tr
-								each item in row
-									td!= item
+	each scenario in scenarios
+		.page-header.feature-header
+			h4(id=locals.slug(scenario.name).toLowerCase())!=scenario.name
+		+tags(scenario.tags)
+		ol.scenario-steps.page-scenario
+			each step in scenario.steps
+				+step(step)
+		if scenario.outline
+			each example in scenario.examples
+				h3!= example.keyword
+				table.example
+					each row in example.table
+						tr
+							each item in row
+								td!= item
