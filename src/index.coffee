@@ -18,8 +18,14 @@ module.exports = (env, callback) ->
 	class GherkinPlugin extends env.ContentPlugin
 		
 		constructor: (@filepath, @text) ->
-			@template = 'feature.jade' # TODO: read from configuration
-			lang = 'en' # TODO: read from configuration
+			configTemplate = env.config.gherkin?.template
+			configLang     = env.config.gherkin?.language
+			if configTemplate?
+				@template = configTemplate
+			else
+				@template = 'gherkin.jade'
+				env.logger.warn 'No template for wintersmith-gherkin set, using ' + @template + ' as default'
+			lang = configLang or 'en'
 			@lexer = new GherkinLexer lang
 		
 		getFilename: ->
@@ -30,6 +36,9 @@ module.exports = (env, callback) ->
 		
 		getView: -> (env, locals, contents, templates, callback) ->
 			template = templates[@template]
+			if template is undefined
+				callback Error 'Could not find template ' + @template
+				return
 			lastScenario = null
 			feature =
 				scenarios: []
