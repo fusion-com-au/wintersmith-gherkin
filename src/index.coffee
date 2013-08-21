@@ -39,8 +39,13 @@ module.exports = (env, callback) ->
 		
 		getFilename: ->
 			feature = @filepath.relative
+			dir     = path.dirname feature
 			ext     = path.extname feature
-			name    = path.basename feature, ext
+			if dir is '.'
+				dir = ''
+			else
+				dir = dir + '/'
+			name    = dir + path.basename feature, ext
 			name + '.html'
 		
 		getView: -> (env, locals, contents, templates, callback) ->
