@@ -133,7 +133,7 @@ module.exports = (env, callback) ->
 				plugin = new GherkinPlugin filepath, result.toString()
 			callback error, plugin
 	
-	env.registerContentPlugin 'gherkin', '**/*.*feature', GherkinPlugin
+	env.registerContentPlugin 'pages', '**/*.*feature', GherkinPlugin
 	
 	# tell plugin manager we are done
 	callback()
