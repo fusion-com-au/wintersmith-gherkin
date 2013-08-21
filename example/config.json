@@ -4,5 +4,9 @@
 	],
 	"gherkin": {
 		"template": "gherkin.jade"
+	},
+	"require": {
+		"slug": "slug",
+		"util": "util"
 	}
 }

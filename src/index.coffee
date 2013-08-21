@@ -119,7 +119,12 @@ module.exports = (env, callback) ->
 			@lexer.on 'tag', (value) ->
 				tags.push value
 			@lexer.on 'eof', =>
-				callback null, new Buffer template.fn feature
+				ctx =
+					env: env
+					contents: contents
+				env.utils.extend ctx, locals
+				env.utils.extend ctx, feature
+				callback null, new Buffer template.fn ctx
 			@lexer.scan @text
 	
 	GherkinPlugin.fromFile = (filepath, callback) ->

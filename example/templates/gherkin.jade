@@ -1,15 +1,59 @@
+
+mixin link(str)
+	a(href='#'+locals.slug(str).toLowerCase())!=str
+
+mixin step(step)
+	li
+		span.key= step.keyword
+		span!= step.name
+		if step.table.length > 0
+			table.datatable
+				each row in step.table
+					tr
+						each item in row
+							td!= item
+		if step.docString
+			div.docstring!= step.docString.string
+
+mixin tags(tags)
+	if tags
+		div.tags
+			each tag in tags
+				span!= tag
+
 doctype
 head
 	title!= 'Feature: ' + name
 h1!= name
++tags(tags)
 != description
+if background
+	h2!= 'Background: ' + background.name
+	+tags(background.tags)
+	ul
+		each step in background.steps
+			+step(step)
 h2 Scenarios
+ul.nav-scenarios
+	each scenario in scenarios
+		li
+			+link(scenario.name)
 ul
 	each scenario in scenarios
 		li
-			h2!= scenario.name
+			if scenario.outline
+				h2(id=locals.slug(scenario.name).toLowerCase())!= 'Scenario Outline: ' + scenario.name
+			else
+				h2(id=locals.slug(scenario.name).toLowerCase())!= 'Scenario: ' + scenario.name
+			+tags(scenario.tags)
 			ul
 				each step in scenario.steps
-					li
-						span= step.keyword
-						span!= step.name
+					+step(step)
+			if scenario.outline
+				each example in scenario.examples
+					h3!= example.keyword
+					table.example
+						each row in example.table
+							tr
+								each item in row
+									td!= item

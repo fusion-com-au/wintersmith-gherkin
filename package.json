@@ -16,7 +16,8 @@
 	},
 	"devDependencies": {
 		"coffee-script": "~1.6.3",
-		"wintersmith": "~2.0.5"
+		"wintersmith": "~2.0.5",
+		"slug": "~0.3.3"
 	},
 	"peerDependencies": {
 		"wintersmith": "~2.0.5"
