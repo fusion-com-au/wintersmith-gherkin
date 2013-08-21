@@ -16,13 +16,9 @@ and add `wintersmith-gherkin` to your config.json
 {
 	"plugins": [
 		"wintersmith-gherkin"
-	]
+	],
+	"gherkin": {
+		"template": "gherkin.jade"
+	}
 }
-```
-
-## Running tests
-
-```
-npm install
-npm test
 ```
