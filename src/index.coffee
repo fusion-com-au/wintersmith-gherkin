@@ -122,7 +122,7 @@ module.exports = (env, callback) ->
 			@lexer.on 'row', (row) ->
 				lastTable.push row
 			@lexer.on 'tag', (value) ->
-				tags.push value
+				tags.push value.substr 1
 			@lexer.on 'eof', =>
 				ctx =
 					env: env

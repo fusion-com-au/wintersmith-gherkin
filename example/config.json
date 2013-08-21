@@ -8,5 +8,8 @@
 	"require": {
 		"slug": "slug",
 		"util": "util"
+	},
+	"nav": {
+		
 	}
 }
