@@ -38,15 +38,7 @@ module.exports = (env, callback) ->
 			@lexer = new GherkinLexer lang
 		
 		getFilename: ->
-			feature = @filepath.relative
-			dir     = path.dirname feature
-			ext     = path.extname feature
-			if dir is '.'
-				dir = ''
-			else
-				dir = dir + '/'
-			name    = dir + path.basename feature, ext
-			name + '.html'
+			@filepath.relative.replace /feature$/, 'html'
 		
 		getView: -> (env, locals, contents, templates, callback) ->
 			template = templates[@template]
