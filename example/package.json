@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"license": "MIT",
 	"dependencies": {
-		"slug": "~0.3.3"
+		"slug": "~0.3.3",
+		"wintersmith-node-sass": "~0.1.0"
 	}
 }

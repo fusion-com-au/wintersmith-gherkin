@@ -1,6 +1,7 @@
 {
 	"plugins": [
-		"./../index-dev.js"
+		"./../index-dev.js",
+		"wintersmith-node-sass"
 	],
 	"gherkin": {
 		"template": "gherkin.jade"
